@@ -10,13 +10,43 @@ function App() {
     // The selectedProjectId is initially undefined but changes to null if a project is being added
     selectedProjectId: undefined,
     projects: [],
+    tasks: [],
   });
+
+  const handleAddTask = (text) => {
+    setProjectsState((prevState) => {
+      const taskId = Math.random();
+      const newTask = {
+        text: text,
+        projectId: prevState.selectedProjectId,
+        id: taskId,
+      };
+      return {
+        ...prevState,
+        tasks: [...prevState.tasks, newTask],
+      };
+    });
+  };
+
+  const handleDeleteTask = () => {};
 
   const handleSelectProject = (id) => {
     setProjectsState((prevState) => {
       return {
         ...prevState,
         selectedProjectId: id,
+      };
+    });
+  };
+
+  const handleDeleteProjectClick = () => {
+    setProjectsState((prevState) => {
+      return {
+        ...prevState,
+        selectedProjectId: undefined,
+        projects: prevState.projects.filter(
+          (project) => project.id !== prevState.selectedProjectId
+        ),
       };
     });
   };
@@ -58,7 +88,15 @@ function App() {
     (project) => project.id === projectsState.selectedProjectId
   );
 
-  let content = <SelectedProject project={selectedProject} />;
+  let content = (
+    <SelectedProject
+      project={selectedProject}
+      onDelete={handleDeleteProjectClick}
+      onAddTask={handleAddTask}
+      onDeleteTask={handleDeleteTask}
+      tasks={projectsState.tasks}
+    />
+  );
 
   if (projectsState.selectedProjectId === null) {
     content = (
